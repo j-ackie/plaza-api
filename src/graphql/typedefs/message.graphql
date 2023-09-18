@@ -1,0 +1,31 @@
+type Message {
+  id: ID!
+
+  sender: User!
+
+  chatID: ID!
+
+  text: String!
+
+  createdAt: Date!
+}
+
+input MessageCreateInput {
+  chatID: ID!
+
+  text: String!
+}
+
+extend type Query {
+  message: Message!
+
+  messages(chatID: ID!): [Message!]!
+}
+
+extend type Mutation {
+  createMessage(message: MessageCreateInput!): Message!
+}
+
+extend type Subscription {
+  messageAdded(chatID: ID!): Message
+}

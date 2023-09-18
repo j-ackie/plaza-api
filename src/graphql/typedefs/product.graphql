@@ -1,6 +1,8 @@
 type Product {
   id: ID!
   name: String!
+  quantity: Int
+  price: Float!
 }
 
 input ProductCreateInput {
@@ -17,6 +19,18 @@ extend type Query {
 }
 
 extend type Mutation {
+  """
+  Creates a product
+  """
   createProduct(product: ProductCreateInput!): Product!
+
+  """
+  Updates a product
+  """
   updateProduct(id: ID!, product: ProductUpdateInput!): Product!
+
+  """
+  Deletes a product
+  """
+  deleteProduct(id: ID!): ID
 }

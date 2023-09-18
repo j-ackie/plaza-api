@@ -1,17 +1,17 @@
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import knex from 'knex';
 
 dotenv.config();
 
-const connectToDB = async () => {
-  try {
-    const connection = await mongoose.connect(
-      process.env.DATABASE_URI as string
-    );
-    console.log('Connected to database');
-  } catch (error: any) {
-    console.error(error.message);
-  }
-};
+const connection = knex({
+  client: 'pg',
+  connection: {
+    host: 'localhost',
+    port: 5432,
+    database: 'plaza_db',
+    user: 'plaza',
+    password: 'password',
+  },
+});
 
-export default connectToDB;
+export default connection;

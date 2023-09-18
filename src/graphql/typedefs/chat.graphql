@@ -1,0 +1,23 @@
+type Chat {
+  id: ID!
+
+  name: String
+
+  members: [User!]!
+
+  lastActivityAt: Date!
+}
+
+input ChatCreateInput {
+  name: String
+
+  memberIDs: [ID!]!
+}
+
+extend type Query {
+  chats: [Chat!]!
+}
+
+extend type Mutation {
+  createChat(chat: ChatCreateInput): Chat!
+}

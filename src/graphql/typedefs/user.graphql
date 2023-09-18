@@ -1,0 +1,11 @@
+type User {
+  id: ID!
+  username: String!
+  displayName: String!
+  profilePictureURI: String
+  description: String
+}
+
+extend type Query {
+  user(id: ID!): User!
+}
