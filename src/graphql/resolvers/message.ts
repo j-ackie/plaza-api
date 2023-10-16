@@ -11,7 +11,29 @@ type MessageCreateInput = {
 
 const messageQueries = {
   message: async (_: any, args: any) => {},
-  messages: async (_: any, args: any) => {
+  messages: async (_: any, args: any, ctx: any) => {
+    const chat = await connection('Chat')
+      .select('*')
+      .where('id', args.chatID)
+      .first();
+
+    const chatMembers = await connection('ChatMember')
+      .select('*')
+      .where('chat_id', args.chatID)
+      .andWhere('member_id', ctx.user.id)
+      .first();
+    
+    console.log(ctx);
+
+    if (!chatMembers) {
+      console.log("NO!");
+      return null;
+    }
+
+    // if (ctx.user.id != resource.owner.id) {
+    //   return null;
+    // }
+
     const messages = await connection('Message')
       .select('Message.id as message_id', 'User.id as user_id', '*')
       .join('User', 'Message.sender_id', '=', 'User.id')

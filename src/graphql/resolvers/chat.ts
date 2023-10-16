@@ -8,7 +8,7 @@ type ChatCreateInput = {
 };
 
 const chatQueries = {
-  chats: async (_: any, args: any) => {
+  chats: async (_: any, args: any, ctx: any) => {
     const chats = await connection('Chat')
       .select('Chat.*')
       .join('ChatMember', 'Chat.id', '=', 'ChatMember.chat_id')
