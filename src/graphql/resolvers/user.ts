@@ -3,12 +3,12 @@ import connection from '../../db';
 const userQueries = {
   user: async (_: any, args: any) => {
     const user = await connection('User').where({ id: args.id }).first();
-
+    console.log(user);
     return {
       id: user.id,
       username: user.username,
       displayName: user.display_name,
-      profilePictureURI: user.profilePictureURI,
+      profilePictureURI: user.profile_picture_uri,
       description: user.description,
     };
   },
