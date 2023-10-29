@@ -1,5 +1,6 @@
 import { ObjectId } from 'mongoose';
 import { ProductModel } from '../../models';
+import connection from '../../db';
 
 type ProductCreateInput = {
   product: {
@@ -15,8 +16,25 @@ type ProductUpdateInput = {
 };
 
 const productQueries = {
-  products: async (_: any, args: any) => {},
-  product: async (_: any, args: any) => {},
+  products: async (_: any, args: any) => {
+    const products = await connection("Product")
+      .select("*")
+      .where("Product.seller_id", args.sellerID)
+      .join("ProductImage", "Product.id", "=", "ProductImage.product_id")
+
+    return products.map(product => ({
+      id: product.id,
+      sellerID: product.seller_id,
+      name: product.name,
+      description: product.description,
+      quantity: product.quantity,
+      price: product.price,
+      imageURI: product.image_uri
+    }))
+  },
+  product: async (_: any, args: any) => {
+    
+  },
 };
 
 const productMutations = {
