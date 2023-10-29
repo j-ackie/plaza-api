@@ -1,0 +1,29 @@
+type Video {
+  id: ID!
+
+  userID: ID!
+
+  videoURL: String!
+
+  description: String!
+
+  products: [Product!]!
+}
+
+input VideoCreateInput {
+  videoURL: String!
+
+  description: String!
+
+  productIDs: [ID!]!
+}
+
+extend type Query {
+  video(id: ID!): [Video!]!
+
+  videos(userID: ID!): [Video!]!
+}
+
+extend type Mutation {
+  createVideo(video: VideoCreateInput!): Video!
+}
