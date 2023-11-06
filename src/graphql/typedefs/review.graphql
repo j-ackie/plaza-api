@@ -1,0 +1,32 @@
+type Review {
+  id: ID!
+  productID: Int!
+  reviewerID: Int!
+  title: String
+  description: String
+  rating: Int!
+  createdAt: Date!
+}
+
+input ReviewCreateInput {
+  productID: Int!
+  title: String
+  description: String
+  rating: Int!
+}
+
+input ReviewFilters {
+  productID: Int
+  sellerID: Int
+}
+
+extend type Query {
+  reviews(filters: ReviewFilters!): [Review!]!
+}
+
+extend type Mutation {
+  """
+  Creates a product
+  """
+  createReview(review: ReviewCreateInput!): Review!
+}

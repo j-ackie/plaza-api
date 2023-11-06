@@ -10,6 +10,12 @@ type Video {
   products: [Product!]!
 }
 
+type VideoInfo {
+  id: ID!
+
+  userID: ID!
+}
+
 input VideoCreateInput {
   videoURL: String!
 
@@ -19,9 +25,9 @@ input VideoCreateInput {
 }
 
 extend type Query {
-  video(id: ID!): [Video!]!
+  video(videoID: ID!): [Video!]!
 
-  videos(userID: ID!): [Video!]!
+  videos(userID: ID!): [VideoInfo!]!
 }
 
 extend type Mutation {

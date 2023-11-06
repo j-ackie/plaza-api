@@ -9,6 +9,15 @@ import schema from './graphql';
 import { CognitoJwtVerifier } from "aws-jwt-verify";
 import connection from './db';
 
+const user = {
+  id: 1,
+  sub: 'b14a161c-f682-4bfc-8dc8-75e778f00a73',
+  username: 'JohnSmith9000',
+  display_name: 'John Smith',
+  profile_picture_uri: 'https://d.newsweek.com/en/full/2297448/golden-retriever.jpg?w=1600&h=1600&q=88&f=55e676b03801944abe9791eff4272a2e',
+  description: 'I am John Smith',
+}
+
 const startServer = async () => {
   const app = express();
   const httpServer = http.createServer(app);
@@ -26,6 +35,15 @@ const startServer = async () => {
       tokenUse: "access",
       clientId: "144mbeg2bfsmq450eefu9te2vm",
     });
+
+    return {
+      id: 1,
+      sub: 'b14a161c-f682-4bfc-8dc8-75e778f00a73',
+      username: 'JohnSmith9000',
+      display_name: 'John Smith',
+      profile_picture_uri: 'https://d.newsweek.com/en/full/2297448/golden-retriever.jpg?w=1600&h=1600&q=88&f=55e676b03801944abe9791eff4272a2e',
+      description: 'I am John Smith',
+    }
 
     try {
       const payload = await verifier.verify(
@@ -71,6 +89,7 @@ const startServer = async () => {
     express.urlencoded({ extended: true }),
     expressMiddleware(server, {
       context: async({req, res}) => {
+        return { user };
         return setContext(req.headers.authorization as string);
       }
     }),

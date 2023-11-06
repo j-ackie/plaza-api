@@ -7,7 +7,9 @@ import {
 } from './message';
 import { userQueries } from './user';
 import { chatMutations, chatQueries } from './chat';
-import { videoQueries } from './video';
+import { videoQueries, videoMutations } from './video';
+import { reviewQueries, reviewMutations } from './review';
+import { likedQueries, likedMutations } from './liked';
 import { PubSub } from 'graphql-subscriptions';
 
 const pubsub = new PubSub();
@@ -20,11 +22,16 @@ const resolvers = {
     ...messageQueries,
     ...userQueries,
     ...videoQueries,
+    ...reviewQueries,
+    ...likedQueries
   },
   Mutation: {
     ...chatMutations,
     ...productMutations,
     ...messageMutations,
+    ...reviewMutations,
+    ...likedMutations,
+    ...videoMutations
   },
   Subscription: {
     ...messageSubscriptions,

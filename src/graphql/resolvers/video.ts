@@ -9,16 +9,59 @@ type VideoCreateInput = {
         productIDs: [number]
     };
   };
+
+type Video = {
+  id: number
+
+  user_id: number
+
+  video_url: string
+
+  description: string
+}
   
-  const videoQueries = {
-    video: async (_: any, args: any) => {},
-    videos: async (_: any, args: any, ctx: any) => {
-      const videoProducts = await connection('VideoProduct')
+const videoQueries = {
+    video: async (_: any, args: any) => {
+      const video = await connection('Video')
         .select('*')
-        .join("Video", "VideoProduct.video_id", "=", "Video.id")
+        .where('id', args.videoID)
+
+      console.log(video)
+      if(!video){
+        return null
+      }
+
+      return video.map(async video => {
+        const products = await connection("Product")
+          .select('*')
+          .join("ProductImage", "ProductImage.product_id", "=", "Product.id")
+          .join("VideoProduct", "Product.id", "=", "VideoProduct.product_id")
+          .where("VideoProduct.video_id", video.id)
+
+        return ({
+          id: video.id,
+          userID: video.user_id,
+          videoURL: video.video_url,
+          description: video.description,
+          products: products.map(product => ({
+              id: product.id,
+              sellerID: product.seller_id,
+              name: product.name,
+              description: product.description,
+              quantity: product.quantity,
+              price: product.price,
+              imageURI: product.image_uri
+          }))
+        })
+      })
+    },
+    videos: async (_: any, args: any, ctx: any) => {
+
+      const videos = await connection('Video')
+        .select('id', 'user_id')
         .where('user_id', args.userID)
   
-      if (!videoProducts) {
+      if (!videos) {
         return null;
       }
   
@@ -26,33 +69,42 @@ type VideoCreateInput = {
       //   return null;
       // }
       
-      return videoProducts.map(async video => {
+      return videos.map(async video => {
 
-        const products = await connection("Product")
-            .select('*')
-            .join("ProductImage", "ProductImage.product_id", "=", "Product.id")
-            .join("VideoProduct", "Product.id", "=", "VideoProduct.product_id")
-            .where("VideoProduct.video_id", video.id)
-
-        console.log(products)
         return {
             id: video.id,
             userID: video.user_id,
-            videoURL: video.video_url,
-            description: video.description,
-            products: products.map(product => ({
-                id: product.id,
-                sellerID: product.seller_id,
-                name: product.name,
-                description: product.description,
-                quantity: product.quantity,
-                price: product.price,
-                imageURI: product.image_uri
-            }))
         }
       })
-
     },
   };
 
-  export {videoQueries}
+  const videoMutations = {
+    createVideo: async (parent: undefined, args: VideoCreateInput, ctx: any) => {
+      console.log(ctx);
+
+      // Generate thumbnail here...
+      // var proc = ffmpeg(args.video.videoURL)
+      // .takeScreenshots({
+      //     count: 1,
+      //     timemarks: [ '0' ] // number of seconds
+      //   }, './asset/');
+      
+      const insertedObject = (await connection("Video").insert({
+        user_id: ctx.user.id,
+        video_url: args.video.videoURL,
+        description: args.video.description,
+
+      }).returning('*'))[0];
+
+      return {
+        id: insertedObject.id,
+        userID: insertedObject.user_id,
+        videoURL: insertedObject.video_url,
+        description: insertedObject.description,
+
+      };
+    }
+  }
+
+  export {videoQueries, videoMutations}

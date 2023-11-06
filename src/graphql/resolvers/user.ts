@@ -2,7 +2,17 @@ import connection from '../../db';
 
 const userQueries = {
   user: async (_: any, args: any) => {
-    const user = await connection('User').where({ id: args.id }).first();
+    const filter = {};
+    if (args.filters.id) {
+      // @ts-ignore
+      filter.id = args.filters.id;
+    }
+    if (args.filters.username) {
+      // @ts-ignore
+      filter.username = args.filters.username;
+    }
+
+    const user = await connection('User').where(filter).first();
     console.log(user);
     return {
       id: user.id,
