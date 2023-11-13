@@ -1,4 +1,7 @@
 import connection from '../../db';
+import Ffmpeg = require('fluent-ffmpeg');
+const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+Ffmpeg.setFfmpegPath(ffmpegPath);
 
 type VideoCreateInput = {
     video: {
@@ -83,12 +86,21 @@ const videoQueries = {
     createVideo: async (parent: undefined, args: VideoCreateInput, ctx: any) => {
       console.log(ctx);
 
-      // Generate thumbnail here...
-      // var proc = ffmpeg(args.video.videoURL)
-      // .takeScreenshots({
-      //     count: 1,
-      //     timemarks: [ '0' ] // number of seconds
-      //   }, './asset/');
+      Ffmpeg(args.video.videoURL)
+      .on('end', function() {
+        console.log('Screenshots taken');
+      })
+      .on('error', function(err) {
+        console.error(err);
+      })
+      .screenshots({
+        // Will take screenshots at 20%, 40%, 60% and 80% of the video
+        count: 4,
+        folder: './asset/output',
+        filename: "output.jpg",
+        size: '320x240',
+        timemarks: [ '1' ]
+      });
       
       const insertedObject = (await connection("Video").insert({
         user_id: ctx.user.id,

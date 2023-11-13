@@ -10,12 +10,17 @@ import { chatMutations, chatQueries } from './chat';
 import { videoQueries, videoMutations } from './video';
 import { reviewQueries, reviewMutations } from './review';
 import { likedQueries, likedMutations } from './liked';
+import { uploadMutations } from './upload';
 import { PubSub } from 'graphql-subscriptions';
+// @ts-ignore
+import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
+// import { GraphQLUpload } from 'graphql-upload';
 
 const pubsub = new PubSub();
 
 const resolvers = {
   Date: dateScalar,
+  Upload: GraphQLUpload,
   Query: {
     ...chatQueries,
     ...productQueries,
@@ -31,7 +36,8 @@ const resolvers = {
     ...messageMutations,
     ...reviewMutations,
     ...likedMutations,
-    ...videoMutations
+    ...videoMutations,
+    ...uploadMutations,
   },
   Subscription: {
     ...messageSubscriptions,
