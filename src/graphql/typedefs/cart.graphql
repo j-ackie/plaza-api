@@ -1,0 +1,27 @@
+type Cart {
+  id: ID!
+
+  productID: ID!
+
+  userID: ID!
+
+  imageURI: String!
+
+  name: String!
+
+  price: Float!
+}
+
+input CartInsertInput {
+  productID: ID!
+
+  userID: ID!
+}
+
+extend type Query {
+  cart(userID: Int!): [Cart!]!
+}
+
+extend type Mutation {
+  insertCart(order: CartInsertInput): Cart!
+}

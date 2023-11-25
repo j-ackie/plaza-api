@@ -17,7 +17,7 @@ input ProductUpdateInput {
 }
 
 extend type Query {
-  product: Product!
+  product(productID: ID!): Product!
   products(sellerID: ID!): [Product!]!
 }
 

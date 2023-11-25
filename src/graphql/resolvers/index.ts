@@ -10,17 +10,19 @@ import { chatMutations, chatQueries } from './chat';
 import { videoQueries, videoMutations } from './video';
 import { reviewQueries, reviewMutations } from './review';
 import { likedQueries, likedMutations } from './liked';
-import { uploadMutations } from './upload';
+// import { uploadMutations } from './upload';
 import { PubSub } from 'graphql-subscriptions';
 // @ts-ignore
-import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
+// import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
+import { cartMutations, cartQueries } from './cart';
+import { historyMutations, historyQueries } from './history';
 // import { GraphQLUpload } from 'graphql-upload';
 
 const pubsub = new PubSub();
 
 const resolvers = {
   Date: dateScalar,
-  Upload: GraphQLUpload,
+  // Upload: GraphQLUpload,
   Query: {
     ...chatQueries,
     ...productQueries,
@@ -28,7 +30,9 @@ const resolvers = {
     ...userQueries,
     ...videoQueries,
     ...reviewQueries,
-    ...likedQueries
+    ...likedQueries,
+    ...cartQueries,
+    ...historyQueries,
   },
   Mutation: {
     ...chatMutations,
@@ -37,7 +41,9 @@ const resolvers = {
     ...reviewMutations,
     ...likedMutations,
     ...videoMutations,
-    ...uploadMutations,
+    ...cartMutations,
+    ...historyMutations
+    //...uploadMutations,
   },
   Subscription: {
     ...messageSubscriptions,

@@ -1,4 +1,12 @@
 import connection from '../../db';
+import client from '../../s3';
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  getSignedUrl,
+  S3RequestPresigner,
+} from "@aws-sdk/s3-request-presigner";
+import crypto from 'crypto';
+
 import Ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
 Ffmpeg.setFfmpegPath(ffmpegPath);
@@ -61,22 +69,19 @@ const videoQueries = {
     videos: async (_: any, args: any, ctx: any) => {
 
       const videos = await connection('Video')
-        .select('id', 'user_id')
-        .where('user_id', args.userID)
-  
-      if (!videos) {
-        return null;
-      }
+        .select('*')
+        .where('user_id', args.userID);
   
       // if (ctx.user.id != resource.owner.id) {
       //   return null;
       // }
       
-      return videos.map(async video => {
-
+      return videos.map(async (video) => {
+        
         return {
-            id: video.id,
-            userID: video.user_id,
+          id: video.id,
+          userID: video.user_id,
+
         }
       })
     },
@@ -84,37 +89,40 @@ const videoQueries = {
 
   const videoMutations = {
     createVideo: async (parent: undefined, args: VideoCreateInput, ctx: any) => {
-      console.log(ctx);
+      // Ffmpeg(args.video.videoURL)
+      // .on('end', function() {
+      //   console.log('Screenshots taken');
+      // })
+      // .on('error', function(err) {
+      //   console.error(err);
+      // })
+      // .screenshots({
+      //   // Will take screenshots at 20%, 40%, 60% and 80% of the video
+      //   count: 4,
+      //   folder: './asset/output',
+      //   filename: "output.jpg",
+      //   size: '320x240',
+      //   timemarks: [ '1' ]
+      // });
+      console.log(args);
 
-      Ffmpeg(args.video.videoURL)
-      .on('end', function() {
-        console.log('Screenshots taken');
-      })
-      .on('error', function(err) {
-        console.error(err);
-      })
-      .screenshots({
-        // Will take screenshots at 20%, 40%, 60% and 80% of the video
-        count: 4,
-        folder: './asset/output',
-        filename: "output.jpg",
-        size: '320x240',
-        timemarks: [ '1' ]
-      });
+      const bucketKey = crypto.randomBytes(32).toString('hex');
+      const command = new PutObjectCommand({ Bucket: 'plaza-videos-images', Key: bucketKey })
+      const presignedUrl = getSignedUrl(client, command, { expiresIn: 60 });
       
       const insertedObject = (await connection("Video").insert({
         user_id: ctx.user.id,
-        video_url: args.video.videoURL,
+        video_bucket_key: bucketKey,
         description: args.video.description,
-
       }).returning('*'))[0];
 
+      // Insert VideoProducts
       return {
         id: insertedObject.id,
         userID: insertedObject.user_id,
-        videoURL: insertedObject.video_url,
+        videoURL: presignedUrl,
         description: insertedObject.description,
-
+        products: []
       };
     }
   }

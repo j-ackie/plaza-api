@@ -17,8 +17,6 @@ type VideoInfo {
 }
 
 input VideoCreateInput {
-  videoURL: String!
-
   description: String!
 
   productIDs: [ID!]!
