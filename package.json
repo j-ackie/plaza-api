@@ -32,8 +32,6 @@
     "graphql-upload": "^16.0.2",
     "graphql-ws": "^5.14.0",
     "knex": "^2.5.1",
-    "mongodb": "^6.0.0",
-    "mongoose": "^7.5.0",
     "nodemon": "^3.0.1",
     "pg": "^8.11.3",
     "ts-node": "^10.9.1",
