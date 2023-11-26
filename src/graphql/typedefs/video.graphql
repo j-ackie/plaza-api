@@ -22,8 +22,13 @@ input VideoCreateInput {
   productIDs: [ID!]!
 }
 
+input VideoFilter {
+  productID: Int
+  videoID: Int
+}
+
 extend type Query {
-  video(videoID: ID!): Video!
+  video(filter: VideoFilter!): Video!
 
   videos(userID: ID!): [VideoInfo!]!
 }
