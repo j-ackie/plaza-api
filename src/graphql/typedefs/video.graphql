@@ -23,7 +23,7 @@ input VideoCreateInput {
 }
 
 extend type Query {
-  video(videoID: ID!): [Video!]!
+  video(videoID: ID!): Video!
 
   videos(userID: ID!): [VideoInfo!]!
 }
