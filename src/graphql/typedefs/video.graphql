@@ -22,15 +22,16 @@ input VideoCreateInput {
   productIDs: [ID!]!
 }
 
-input VideoFilter {
-  productID: Int
-  videoID: Int
+input VideoFilters {
+  productID: Int!
+
+  userID: Int!
 }
 
 extend type Query {
-  video(filter: VideoFilter!): Video!
+  video(videoID: ID!): Video!
 
-  videos(userID: ID!): [VideoInfo!]!
+  videos(filters: VideoFilters!): [VideoInfo!]!
 }
 
 extend type Mutation {

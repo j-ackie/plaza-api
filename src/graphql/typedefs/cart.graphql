@@ -5,6 +5,8 @@ type Cart {
 
   userID: ID!
 
+  videoID: ID!
+
   imageURI: String!
 
   name: String!

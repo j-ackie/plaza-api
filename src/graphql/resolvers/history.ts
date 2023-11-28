@@ -22,7 +22,9 @@ type HistoryInsertInput = {
             orderedAt: order.ordered_at,
             status: order.status,
             imageURI: order.image_uri,
-            name: order.name
+            name: order.name,
+            videoID: order.video_id,
+            quantity: order.quantity
         }))
     },
   };

@@ -28,24 +28,17 @@ type Video = {
   description: string;
 };
 
-type VideoFilter = {
-  filter: {
-    productID: number | null;
-    videoID: number | null;
+type VideoFilters = {
+  filters: {
+    productID: number | null,
+    userID: number | null
   }
 }
 
 const videoQueries = {
-  video: async (_: any, args: VideoFilter) => {
-
-    const videoID = !!args.filter.videoID ? args.filter.videoID : (
-      await connection('VideoProduct').select('video_id').where('product_id', args.filter.productID)
-    )[0].video_id;
-
-    console.log(videoID)
-
+  video: async (_: any, args: any) => {
     const video = (
-      await connection('Video').select('*').where('id', videoID)
+      await connection('Video').select('*').where('id', args.videoID)
     )[0];
 
     const products = await connection('Product')
@@ -53,8 +46,6 @@ const videoQueries = {
       .join('ProductImage', 'ProductImage.product_id', '=', 'Product.id')
       .join('VideoProduct', 'Product.id', '=', 'VideoProduct.product_id')
       .where('VideoProduct.video_id', video.id);
-      
-    console.log(video)
 
     const command = new GetObjectCommand({
       Bucket: 'plaza-videos-images',
@@ -78,10 +69,24 @@ const videoQueries = {
       })),
     };
   },
-  videos: async (_: any, args: any, ctx: any) => {
-    const videos = await connection('Video')
-      .select('*')
-      .where('user_id', args.userID);
+  videos: async (_: any, args: VideoFilters, ctx: any) => {
+    // const videos = await connection('Video')
+    //   .select('*')
+    //   .where('user_id', );
+
+    let videos
+    console.log(args)
+    if(args.filters.userID){
+      videos = await connection('Video')
+        .select('*')
+        .where('user_id', args.filters.userID)
+    }
+    else{
+      videos = await connection('VideoProduct')
+        .select("*")
+        .join("Video", "Video.id", "=", "VideoProduct.video_id")
+        .where('product_id', args.filters.productID)
+    }
 
     // if (ctx.user.id != resource.owner.id) {
     //   return null;

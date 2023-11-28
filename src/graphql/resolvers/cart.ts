@@ -22,7 +22,8 @@ type CartInsertInput = {
             productID: order.product_id,
             imageURI: order.image_uri,
             name: order.name,
-            price: order.price
+            price: order.price,
+            videoID: order.video_id
         }))
     },
   };

@@ -12,6 +12,10 @@ type History {
   name: String!
 
   status: ID!
+
+  videoID: ID!
+
+  quantity: Int!
 }
 
 input HistoryInsertInput {
