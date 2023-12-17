@@ -5,7 +5,7 @@ import {
   messageMutations,
   messageSubscriptions,
 } from './message';
-import { userQueries } from './user';
+import { userQueries, userMutations } from './user';
 import { chatMutations, chatQueries } from './chat';
 import { videoQueries, videoMutations } from './video';
 import { reviewQueries, reviewMutations } from './review';
@@ -42,7 +42,8 @@ const resolvers = {
     ...likedMutations,
     ...videoMutations,
     ...cartMutations,
-    ...historyMutations
+    ...historyMutations,
+    ...userMutations,
     //...uploadMutations,
   },
   Subscription: {

@@ -30,10 +30,10 @@ type Video = {
 
 type VideoFilters = {
   filters: {
-    productID: number | null,
-    userID: number | null
-  }
-}
+    productID: number | null;
+    userID: number | null;
+  };
+};
 
 const videoQueries = {
   video: async (_: any, args: any) => {
@@ -51,8 +51,11 @@ const videoQueries = {
       Bucket: 'plaza-videos-images',
       Key: video.video_bucket_key,
     });
-    const presignedUrl = getSignedUrl(client, command, { expiresIn: 3600 });
+    const presignedUrl = await getSignedUrl(client, command, {
+      expiresIn: 3600,
+    });
 
+    console.log(presignedUrl);
     return {
       id: video.id,
       userID: video.user_id,
@@ -74,18 +77,17 @@ const videoQueries = {
     //   .select('*')
     //   .where('user_id', );
 
-    let videos
-    console.log(args)
-    if(args.filters.userID){
+    let videos;
+    console.log(args);
+    if (args.filters.userID) {
       videos = await connection('Video')
         .select('*')
-        .where('user_id', args.filters.userID)
-    }
-    else{
+        .where('user_id', args.filters.userID);
+    } else {
       videos = await connection('VideoProduct')
-        .select("*")
-        .join("Video", "Video.id", "=", "VideoProduct.video_id")
-        .where('product_id', args.filters.productID)
+        .select('*')
+        .join('Video', 'Video.id', '=', 'VideoProduct.video_id')
+        .where('product_id', args.filters.productID);
     }
 
     // if (ctx.user.id != resource.owner.id) {
@@ -96,6 +98,7 @@ const videoQueries = {
       return {
         id: video.id,
         userID: video.user_id,
+        thumbnailURL: video.thumbnailURL,
       };
     });
   },
@@ -125,7 +128,7 @@ const videoMutations = {
       Bucket: 'plaza-videos-images',
       Key: bucketKey,
     });
-    const presignedUrl = getSignedUrl(client, command, { expiresIn: 60 });
+    const presignedUrl = await getSignedUrl(client, command, { expiresIn: 60 });
 
     const insertedObject = (
       await connection('Video')

@@ -14,3 +14,7 @@ input UserFilters {
 extend type Query {
   user(filters: UserFilters!): User!
 }
+
+extend type Mutation {
+  updateProfilePicture: String!
+}
