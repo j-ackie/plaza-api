@@ -95,10 +95,17 @@ const videoQueries = {
     // }
 
     return videos.map(async (video) => {
+      const command = new GetObjectCommand({
+        Bucket: 'plaza-videos-images',
+        Key: video.video_bucket_key + "-thumbnail",
+      });
+      const presignedUrl = await getSignedUrl(client, command, {
+        expiresIn: 3600,
+      });  
       return {
         id: video.id,
         userID: video.user_id,
-        thumbnailURL: video.thumbnailURL,
+        thumbnailURL: presignedUrl,
       };
     });
   },
@@ -106,26 +113,11 @@ const videoQueries = {
 
 const videoMutations = {
   createVideo: async (parent: undefined, args: VideoCreateInput, ctx: any) => {
-    // Ffmpeg(args.video.videoURL)
-    // .on('end', function() {
-    //   console.log('Screenshots taken');
-    // })
-    // .on('error', function(err) {
-    //   console.error(err);
-    // })
-    // .screenshots({
-    //   // Will take screenshots at 20%, 40%, 60% and 80% of the video
-    //   count: 4,
-    //   folder: './asset/output',
-    //   filename: "output.jpg",
-    //   size: '320x240',
-    //   timemarks: [ '1' ]
-    // });
     console.log(args);
 
     const bucketKey = crypto.randomBytes(32).toString('hex');
     const command = new PutObjectCommand({
-      Bucket: 'plaza-videos-images',
+      Bucket: 'plaza-unprocessed-videos-images',
       Key: bucketKey,
     });
     const presignedUrl = await getSignedUrl(client, command, { expiresIn: 60 });
