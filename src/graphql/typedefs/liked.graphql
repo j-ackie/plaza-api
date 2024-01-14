@@ -14,7 +14,12 @@ extend type Query {
 
 extend type Mutation {
   """
-  Creates a product
+  Creates a like
   """
   createLiked(liked: LikedCreateInput!): Liked!
+
+  """
+  Deletes a like
+  """
+  deleteLiked(liked: LikedCreateInput!): Liked!
 }

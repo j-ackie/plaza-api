@@ -10,6 +10,8 @@ type Video {
   description: String!
 
   products: [Product!]!
+
+  isLiked: Boolean!
 }
 
 type VideoInfo {

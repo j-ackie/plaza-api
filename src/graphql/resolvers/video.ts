@@ -23,9 +23,11 @@ type Video = {
 
   user_id: number;
 
-  video_url: string;
+  // video_url: string;
 
-  description: string;
+  // description: string;
+
+  thumbnailURL: string;
 };
 
 type VideoFilters = {
@@ -35,8 +37,17 @@ type VideoFilters = {
   };
 };
 
+// interface VideosShort{
+//   userID?: number
+//   productID?: number
+
+//   // for some reason the async call to get array of videos refuses to cast to an array of Videos so
+//   // TODO: change the type
+//   videos: any
+// }
+
 const videoQueries = {
-  video: async (_: any, args: any) => {
+  video: async (_: any, args: any, ctx: any) => {
     const video = (
       await connection('Video').select('*').where('id', args.videoID)
     )[0];
@@ -46,6 +57,9 @@ const videoQueries = {
       .join('ProductImage', 'ProductImage.product_id', '=', 'Product.id')
       .join('VideoProduct', 'Product.id', '=', 'VideoProduct.product_id')
       .where('VideoProduct.video_id', video.id);
+
+    const liked = await connection('VideoLiked')
+      .select(connection.raw("exists(select 1 where video_id = ?)", [video.id])).where("user_id", ctx.user.id)
 
     const command = new GetObjectCommand({
       Bucket: 'plaza-videos-images',
@@ -70,6 +84,7 @@ const videoQueries = {
         price: product.price,
         imageURI: product.image_uri,
       })),
+      isLiked: liked[0].exists,
     };
   },
   videos: async (_: any, args: VideoFilters, ctx: any) => {
@@ -78,7 +93,6 @@ const videoQueries = {
     //   .where('user_id', );
 
     let videos;
-    console.log(args);
     if (args.filters.userID) {
       videos = await connection('Video')
         .select('*')
@@ -94,20 +108,43 @@ const videoQueries = {
     //   return null;
     // }
 
+    // let result : VideosShort = {
+    //   videos: videos.map(async (video) => {
+    //     const command = new GetObjectCommand({
+    //       Bucket: 'plaza-videos-images',
+    //       Key: video.video_bucket_key + "-thumbnail",
+    //     });
+    //     const presignedUrl = await getSignedUrl(client, command, {
+    //       expiresIn: 3600,
+    //     });  
+    //     return {
+    //       id: video.id,
+    //       userID: video.user_id,
+    //       thumbnailURL: presignedUrl,
+    //     };
+    //   })
+    // }; 
+    // if(args.filters.productID){
+    //   result.productID = args.filters.productID
+    // }
+    // else if(args.filters.userID){
+    //   result.userID = args.filters.userID
+    // }
+    console.log(videos)
     return videos.map(async (video) => {
-      const command = new GetObjectCommand({
-        Bucket: 'plaza-videos-images',
-        Key: video.video_bucket_key + "-thumbnail",
-      });
-      const presignedUrl = await getSignedUrl(client, command, {
-        expiresIn: 3600,
-      });  
-      return {
-        id: video.id,
-        userID: video.user_id,
-        thumbnailURL: presignedUrl,
-      };
-    });
+        const command = new GetObjectCommand({
+          Bucket: 'plaza-videos-images',
+          Key: video.video_bucket_key + "-thumbnail",
+        });
+        const presignedUrl = await getSignedUrl(client, command, {
+          expiresIn: 3600,
+        });  
+        return {
+          id: video.id,
+          userID: video.user_id,
+          thumbnailURL: presignedUrl,
+        };
+      })
   },
 };
 

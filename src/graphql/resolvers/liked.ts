@@ -41,6 +41,24 @@ const likedMutations = {
       userID: insertedObject.user_id,
     };
   },
+  deleteLiked: async (parent: undefined, args: LikedCreateInput, ctx: any) => {
+    console.log(ctx);
+
+    const insertedObject = (
+      await connection('VideoLiked')
+        .where({
+          video_id: args.liked.videoID,
+          user_id: ctx.user.id,
+        }).delete()
+        .returning('*')
+    )[0];
+
+    return {
+      id: insertedObject.id,
+      videoID: insertedObject.video_id,
+      userID: insertedObject.user_id,
+    };
+  },
 };
 
 export { likedQueries, likedMutations };
