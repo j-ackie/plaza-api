@@ -58,9 +58,14 @@ const videoQueries = {
       .join('VideoProduct', 'Product.id', '=', 'VideoProduct.product_id')
       .where('VideoProduct.video_id', video.id);
 
-    const liked = await connection('VideoLiked')
-      .select(connection.raw("exists(select 1 where video_id = ?)", [video.id])).where("user_id", ctx.user.id)
+    // const liked = await connection('VideoLiked')
+    //   .select(connection.raw("exists(select 1 where video_id = ?)", [video.id])).where("user_id", ctx.user.id)
 
+    const liked = await connection("VideoLiked")
+      .select(["video_id", "user_id"])
+      .where("video_id", video.id)
+      .andWhere("user_id", ctx.user.id)
+    console.log(liked)
     const command = new GetObjectCommand({
       Bucket: 'plaza-videos-images',
       Key: video.video_bucket_key,
@@ -84,7 +89,7 @@ const videoQueries = {
         price: product.price,
         imageURI: product.image_uri,
       })),
-      isLiked: liked[0].exists,
+      isLiked: liked.length > 0,
     };
   },
   videos: async (_: any, args: VideoFilters, ctx: any) => {

@@ -1,0 +1,30 @@
+type Comment {
+  id: ID!
+
+  videoID: ID!
+
+  userID: ID!
+
+  username: String!
+
+  profilePicture: String!
+
+  comment: String!
+
+  createdAt: Date!
+}
+
+input CommentCreateInput {
+
+  videoID: ID!
+
+  comment: String!
+}
+
+extend type Query {
+  comments(videoID: ID!): [Comment!]!
+}
+
+extend type Mutation {
+  createComment(comment: CommentCreateInput): Comment!
+}

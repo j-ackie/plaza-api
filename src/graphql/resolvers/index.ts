@@ -16,6 +16,7 @@ import { PubSub } from 'graphql-subscriptions';
 // import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { cartMutations, cartQueries } from './cart';
 import { historyMutations, historyQueries } from './history';
+import { commentMutations, commentQueries } from './comment';
 // import { GraphQLUpload } from 'graphql-upload';
 
 const pubsub = new PubSub();
@@ -33,6 +34,7 @@ const resolvers = {
     ...likedQueries,
     ...cartQueries,
     ...historyQueries,
+    ...commentQueries
   },
   Mutation: {
     ...chatMutations,
@@ -44,6 +46,7 @@ const resolvers = {
     ...cartMutations,
     ...historyMutations,
     ...userMutations,
+    ...commentMutations,
     //...uploadMutations,
   },
   Subscription: {
