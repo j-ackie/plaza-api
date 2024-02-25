@@ -11,7 +11,8 @@ const commentQueries = {
   comments: async (_: any, args: any, ctx: any) => {
     const comments = await connection('Comment')
       .select('*')
-      .where('Comment.video_id', args.videoID);
+      .where('Comment.video_id', args.videoID)
+      .orderBy("created_at", "desc");
 
     return comments.map(async (comment) => {
       const user = await connection('User')
