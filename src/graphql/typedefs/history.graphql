@@ -21,7 +21,7 @@ type History {
 input HistoryInsertInput {
   productID: ID!
 
-  userID: ID!
+  videoID: ID
 }
 
 extend type Query {
@@ -29,5 +29,5 @@ extend type Query {
 }
 
 extend type Mutation {
-  insertHistory(order: HistoryInsertInput): Cart!
+  insertHistory(order: HistoryInsertInput): History!
 }

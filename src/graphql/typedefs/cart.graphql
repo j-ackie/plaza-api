@@ -17,7 +17,7 @@ type Cart {
 input CartInsertInput {
   productID: ID!
 
-  userID: ID!
+  videoID: ID
 }
 
 extend type Query {
