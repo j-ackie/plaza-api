@@ -17,17 +17,17 @@ const cartQueries = {
     const cart = await connection('UserCart')
       .select('*')
       .where('user_id', args.userID)
-      .join(
+      .leftJoin(
         'ProductImage',
-        'ProductImage.product_id',
+        'UserCart.product_id',
         '=',
-        'UserCart.product_id'
+        'ProductImage.product_id'
       )
-      .join('Product', 'Product.id', '=', 'UserCart.product_id');
+      .leftJoin('Product', 'UserCart.product_id', '=', 'Product.id');
   
 
     return cart.map(async (order) => {
-
+      console.log("order:", order)
       const command = new GetObjectCommand({
         Bucket: 'plaza-videos-images',
         Key: order.bucket_key,
@@ -96,6 +96,29 @@ const cartMutations = {
       name: product[0].name,
       price: product[0].price,
       productID: insertedObject.product_id
+    };
+
+  },
+
+  deleteCart: async (parent: undefined, args: any, ctx: any) => {
+
+    const deletedObject = (
+      await connection('UserCart')
+        .where("product_id", args.productID)
+        .del()
+        .returning('*')
+    )[0];
+
+    console.log("here?", deletedObject)
+
+    return {
+      id: deletedObject.id,
+      videoID: deletedObject.video_id,
+      userID: deletedObject.user_id,
+      imageURI: "",
+      name: "",
+      price: 0,
+      productID: deletedObject.product_id
     };
 
   },

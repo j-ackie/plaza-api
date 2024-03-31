@@ -26,4 +26,5 @@ extend type Query {
 
 extend type Mutation {
   insertCart(order: CartInsertInput): Cart!
+  deleteCart(productID: Int!): Cart!
 }

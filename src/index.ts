@@ -89,6 +89,7 @@ const startServer = async () => {
     express.urlencoded({ extended: true }),
     expressMiddleware(server, {
       context: async({req, res}) => {
+        console.log(user)
         return { user };
         return setContext(req.headers.authorization as string);
       }
