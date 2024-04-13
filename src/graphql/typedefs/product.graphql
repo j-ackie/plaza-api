@@ -1,12 +1,18 @@
 type Product {
   id: ID!
+  sellerID: Int
   name: String!
+  description: String
   quantity: Int
   price: Float!
+  imageURIs: [String!]!
 }
 
 input ProductCreateInput {
   name: String!
+  description: String
+  quantity: Int
+  price: Float!
 }
 
 input ProductUpdateInput {
@@ -14,8 +20,8 @@ input ProductUpdateInput {
 }
 
 extend type Query {
-  product: Product!
-  products: [Product!]!
+  product(id: ID!): Product!
+  products(sellerID: ID!): [Product!]!
 }
 
 extend type Mutation {

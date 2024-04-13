@@ -1,0 +1,25 @@
+type Liked {
+  id: ID!
+  videoID: Int!
+  userID: Int!
+}
+
+input LikedCreateInput {
+  videoID: Int!
+}
+
+extend type Query {
+  likedVideos(userID: Int!): [Liked!]!
+}
+
+extend type Mutation {
+  """
+  Creates a like
+  """
+  createLiked(liked: LikedCreateInput!): Liked!
+
+  """
+  Deletes a like
+  """
+  deleteLiked(liked: LikedCreateInput!): Liked!
+}

@@ -4,6 +4,8 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import resolvers from './resolvers';
 import { GraphQLScalarType, Kind } from 'graphql';
 
+// https://www.apollographql.com/docs/apollo-server/workflow/generate-types
+
 const gqlFiles = readdirSync(join(__dirname, './typedefs'));
 
 let typeDefs = '';

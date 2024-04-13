@@ -6,6 +6,15 @@ type User {
   description: String
 }
 
+input UserFilters {
+  id: ID
+  username: String
+}
+
 extend type Query {
-  user(id: ID!): User!
+  user(filters: UserFilters!): User!
+}
+
+extend type Mutation {
+  updateProfilePicture: String!
 }

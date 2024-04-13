@@ -1,0 +1,33 @@
+type History {
+  id: ID!
+
+  productID: ID!
+
+  userID: ID!
+
+  orderedAt: Date!
+
+  imageURI: String!
+
+  name: String!
+
+  status: ID!
+
+  videoID: ID!
+
+  quantity: Int!
+}
+
+input HistoryInsertInput {
+  productID: ID!
+
+  videoID: ID
+}
+
+extend type Query {
+  history(userID: Int!): [History!]!
+}
+
+extend type Mutation {
+  insertHistory(order: HistoryInsertInput): History!
+}

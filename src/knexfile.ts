@@ -4,7 +4,7 @@ const knexApp = {
     connection: {
       host: 'localhost',
       port: 5432,
-      database: 'plaza_db',
+      database: 'app_db',
       user: 'plaza',
       password: 'password',
     },

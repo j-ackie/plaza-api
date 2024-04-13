@@ -1,0 +1,29 @@
+type Follow {
+  id: ID!
+  followerID: Int!
+  followingID: Int!
+}
+
+input FollowInput {
+  followingID: Int!
+}
+
+extend type Query {
+  following(userID: Int!): [Follow!]!
+  
+  followers(userID: Int!): [Follow!]!
+
+  isFollowing(followID: Int!): Boolean!
+}
+
+extend type Mutation {
+  """
+  Creates a follow
+  """
+  createFollow(follow: FollowInput!): Follow!
+
+  """
+  Deletes a follow
+  """
+  deleteFollow(follow: FollowInput!): Follow!
+}

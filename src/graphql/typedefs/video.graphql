@@ -1,0 +1,43 @@
+type Video {
+  id: ID!
+
+  userID: ID!
+
+  videoURL: String!
+
+  thumbnailURL: String
+
+  description: String!
+
+  products: [Product!]!
+
+  isLiked: Boolean!
+}
+
+type VideoInfo {
+  id: ID!
+
+  userID: ID!
+}
+
+input VideoCreateInput {
+  description: String!
+
+  productIDs: [ID!]!
+}
+
+input VideoFilters {
+  productID: Int
+
+  userID: Int
+}
+
+extend type Query {
+  video(videoID: ID!): Video!
+
+  videos(filters: VideoFilters!): [Video!]!
+}
+
+extend type Mutation {
+  createVideo(video: VideoCreateInput!): Video!
+}
