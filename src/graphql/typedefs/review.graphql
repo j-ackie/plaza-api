@@ -6,6 +6,8 @@ type Review {
   description: String
   rating: Int!
   createdAt: Date!
+  imageURI: String
+  uploadURI: String
 }
 
 input ReviewCreateInput {
