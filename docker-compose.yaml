@@ -2,7 +2,9 @@ version: '3'
 services:
   app:
     restart: on-failure
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     depends_on:
       - postgres
     environment:

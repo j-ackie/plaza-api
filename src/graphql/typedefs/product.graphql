@@ -6,6 +6,8 @@ type Product {
   quantity: Int
   price: Float!
   imageURIs: [String!]!
+
+  #deliveryCenter: Radius!
 }
 
 input ProductCreateInput {
@@ -13,6 +15,7 @@ input ProductCreateInput {
   description: String
   quantity: Int
   price: Float!
+  #deliveryCenter: RadiusInput!
 }
 
 input ProductUpdateInput {

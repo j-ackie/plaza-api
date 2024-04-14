@@ -1,0 +1,11 @@
+type Radius {
+  latitude: Float!
+  longitude: Float!
+  radius: Float!
+}
+
+input RadiusInput {
+  latitude: Float!
+  longitude: Float!
+  radius: Float!
+}

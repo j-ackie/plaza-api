@@ -108,6 +108,10 @@ const productMutations = {
             description: args.product.description,
             quantity: args.product.quantity,
             price: args.product.price,
+            delivery_range: connection.raw(
+              `POINT(${args.product.deliveryCenter.latitude}, ${args.product.deliveryCenter.longitude})`
+            ),
+            delivery_radius: args.product.deliveryCenter.radius,
           })
           .returning('*')
       )[0];

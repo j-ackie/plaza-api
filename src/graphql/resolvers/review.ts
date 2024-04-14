@@ -1,5 +1,9 @@
 import { GraphQLError } from 'graphql';
 import connection from '../../db';
+import {
+  generateGetPresignedURL,
+  generatePutPresignedURL,
+} from '../../utils/presignedURLs';
 
 type ReviewCreateInput = {
   review: {
@@ -32,23 +36,30 @@ const reviewQueries = {
     }
 
     const reviews = await connection('Review')
-      .select('Review.*')
+      .select('*')
       .where(
         !!args.filters.productID
           ? { product_id: args.filters.productID }
           : { seller_id: args.filters.sellerID }
       )
-      .join('Product', 'Product.id', '=', 'Review.product_id');
+      .join('Product', 'Product.id', '=', 'Review.product_id')
+      .leftJoin('ReviewImage', 'Review.id', '=', 'ReviewImage.review_id');
 
-    return reviews.map((review) => ({
-      id: review.id,
-      productID: review.product_id,
-      reviewerID: review.reviewer_id,
-      title: review.title,
-      description: review.description,
-      rating: review.rating,
-      createdAt: review.created_at,
-    }));
+    return Promise.all(
+      reviews.map(async (review) => ({
+        id: review.review_id,
+        productID: review.product_id,
+        reviewerID: review.reviewer_id,
+        title: review.title,
+        description: review.description,
+        rating: review.rating,
+        createdAt: review.created_at,
+        imageURI: await generateGetPresignedURL(
+          'plaza-videos-images',
+          review.bucket_key
+        ),
+      }))
+    );
   },
 };
 
@@ -58,20 +69,31 @@ const reviewMutations = {
     args: ReviewCreateInput,
     ctx: any
   ) => {
-    console.log(ctx);
+    const { bucketKey, presignedURL } = await generatePutPresignedURL(
+      'plaza-videos-images'
+    );
 
-    const insertedObject = (
-      await connection('Review')
-        .insert({
-          product_id: args.review.productID,
-          reviewer_id: ctx.user.id,
-          title: args.review.title,
-          description: args.review.description,
-          rating: args.review.rating,
-          created_at: new Date().toISOString(),
-        })
-        .returning('*')
-    )[0];
+    const insertedObject = await connection.transaction(async (trx) => {
+      const insertedReviewObject = (
+        await connection('Review')
+          .insert({
+            product_id: args.review.productID,
+            reviewer_id: ctx.user.id,
+            title: args.review.title,
+            description: args.review.description,
+            rating: args.review.rating,
+            created_at: new Date().toISOString(),
+          })
+          .returning('*')
+      )[0];
+
+      await trx('ReviewImage').insert({
+        review_id: insertedReviewObject.id,
+        bucket_key: bucketKey,
+      });
+
+      return insertedReviewObject;
+    });
 
     return {
       id: insertedObject.id,
@@ -81,6 +103,8 @@ const reviewMutations = {
       description: insertedObject.description,
       rating: insertedObject.rating,
       createdAt: insertedObject.created_at,
+      imageURI: await generateGetPresignedURL('plaza-videos-images', bucketKey),
+      uploadURI: presignedURL,
     };
   },
 };
